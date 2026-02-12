@@ -20,71 +20,118 @@ const monthLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Se
 const dayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
 export function ContributionSkylineCard({ isLoading, data }: ContributionSkylineCardProps) {
-  // Generate mock data if not provided
-  const heatmapData = data || Array(52).fill(null).map(() =>
+  // Generate mock data if not provided (24 weeks for a better perspective view)
+  const heatmapData = data || Array(24).fill(null).map(() =>
     Array(7).fill(null).map(() => Math.floor(Math.random() * 25))
   )
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, delay: 0.4 }}
-      className="glassmorphic col-span-2 row-span-2 p-6 neon-glow overflow-hidden"
+      className="glassmorphic col-span-2 row-span-2 p-6 neon-glow overflow-hidden flex flex-col h-full"
     >
-      <h3 className="text-lg font-semibold text-foreground mb-4">Contribution Skyline</h3>
+      <div className="flex items-center justify-between mb-8">
+        <h3 className="text-lg font-semibold text-foreground">Contribution Skyline</h3>
+        <div className="flex gap-2 text-[10px] text-muted-foreground uppercase tracking-widest">
+          <span>Isometric</span>
+          <div className="w-px h-3 bg-border/40" />
+          <span>3D View</span>
+        </div>
+      </div>
 
       {isLoading ? (
-        <div className="h-40 bg-gradient-to-r from-muted/40 to-muted/20 rounded-lg animate-pulse" />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="w-full h-48 bg-gradient-to-r from-muted/40 to-muted/20 rounded-lg animate-pulse" />
+        </div>
       ) : (
-        <div className="overflow-x-auto">
-          <div className="inline-block min-w-full">
-            <div className="flex gap-1">
-              {heatmapData.map((week, weekIdx) => (
-                <motion.div
-                  key={weekIdx}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.4, delay: weekIdx * 0.01 }}
-                  className="flex flex-col gap-1"
-                >
-                  {week.map((day, dayIdx) => (
+        <div className="relative flex-1 flex items-center justify-center perspective-1000">
+          <motion.div
+            className="flex gap-2"
+            style={{
+              transform: 'rotateX(55deg) rotateZ(-45deg)',
+              transformStyle: 'preserve-3d'
+            }}
+          >
+            {heatmapData.map((week, weekIdx) => (
+              <div
+                key={weekIdx}
+                className="flex flex-col gap-2"
+                style={{ transformStyle: 'preserve-3d' }}
+              >
+                {week.map((day, dayIdx) => {
+                  const height = (day / 25) * 80 + 4 // Scaling height
+                  const colorClass = getHeatmapColor(day)
+
+                  return (
                     <motion.div
                       key={`${weekIdx}-${dayIdx}`}
-                      whileHover={{ scale: 1.2 }}
-                      className={`w-3 h-3 rounded transition-smooth cursor-pointer hover:ring-2 hover:ring-primary/60 ${getHeatmapColor(day)}`}
-                      title={`${day} contributions on day`}
-                    />
-                  ))}
-                </motion.div>
-              ))}
-            </div>
-          </div>
+                      initial={{ opacity: 0, translateZ: -100 }}
+                      animate={{ opacity: 1, translateZ: 0 }}
+                      transition={{ duration: 0.5, delay: (weekIdx * 7 + dayIdx) * 0.005 }}
+                      className="relative w-4 h-4"
+                      style={{ transformStyle: 'preserve-3d' }}
+                    >
+                      {/* 3D Vertical Bar (The City Skyline) */}
+                      <motion.div
+                        className={`absolute bottom-0 left-0 w-full rounded-sm transition-all duration-500 ${colorClass}`}
+                        style={{
+                          height: `${height}px`,
+                          transform: `translateZ(${height}px)`,
+                          transformOrigin: 'bottom',
+                          boxShadow: day > 15 ? '0 0 15px rgba(16, 185, 129, 0.4)' : 'none'
+                        }}
+                      />
+
+                      {/* Sides of the bar for 3D effect */}
+                      <div
+                        className={`absolute bottom-0 left-full w-full h-full origin-left bg-black/20`}
+                        style={{
+                          height: `${height}px`,
+                          width: `${height}px`,
+                          transform: 'rotateY(90deg)',
+                          backgroundColor: 'rgba(0,0,0,0.3)'
+                        }}
+                      />
+                      <div
+                        className={`absolute bottom-full left-0 w-full h-full origin-bottom bg-black/10`}
+                        style={{
+                          height: `${height}px`,
+                          transform: 'rotateX(90deg)',
+                          backgroundColor: 'rgba(255,255,255,0.05)'
+                        }}
+                      />
+
+                      {/* Base Square */}
+                      <div className="absolute inset-0 bg-muted/10 rounded-sm" />
+                    </motion.div>
+                  )
+                })}
+              </div>
+            ))}
+          </motion.div>
         </div>
       )}
 
-      <div className="mt-6 pt-4 border-t border-border/40">
-        <div className="flex items-center gap-3">
-          <span className="text-xs text-muted-foreground">Contribution activity:</span>
-          <div className="flex gap-1 items-center">
-            {[0, 1, 2, 3, 4].map((level) => (
-              <div
-                key={level}
-                className={`w-3 h-3 rounded ${
-                  level === 0
-                    ? 'bg-muted/20'
-                    : level === 1
-                    ? 'bg-emerald-900/40'
-                    : level === 2
-                    ? 'bg-emerald-800/60'
-                    : level === 3
-                    ? 'bg-emerald-700/80'
-                    : 'bg-emerald-500'
-                }`}
-              />
-            ))}
+      <div className="mt-auto pt-6 border-t border-border/40">
+        <div className="flex items-center gap-4">
+          <div className="flex flex-col gap-1">
+            <span className="text-[10px] text-muted-foreground uppercase">Intensity Map</span>
+            <div className="flex gap-1 items-center">
+              {[0, 1, 2, 3, 4].map((level) => (
+                <div
+                  key={level}
+                  className={`w-3 h-3 rounded-sm ${level === 0 ? 'bg-muted/20' :
+                      level === 1 ? 'bg-emerald-900/40' :
+                        level === 2 ? 'bg-emerald-800/60' :
+                          level === 3 ? 'bg-emerald-700/80' : 'bg-emerald-500'
+                    }`}
+                />
+              ))}
+            </div>
           </div>
-          <span className="text-xs text-muted-foreground ml-auto">Less ← More</span>
+          <div className="h-8 w-px bg-border/40" />
+          <div className="text-[10px] text-muted-foreground leading-tight">
+            Vertical axis corresponds to<br />scaled contribution count
+          </div>
         </div>
       </div>
     </motion.div>

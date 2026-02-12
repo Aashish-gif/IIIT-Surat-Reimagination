@@ -1,6 +1,6 @@
 export const generateMockUserData = (username: string) => {
   const baseScore = Math.floor(Math.random() * 40) + 60
-  
+
   return {
     avatar: `https://api.github.com/users/${username}/avatar_url` || 'https://avatars.githubusercontent.com/u/1?v=4',
     name: username.charAt(0).toUpperCase() + username.slice(1),
@@ -55,7 +55,7 @@ export const generateRepositories = () => {
   const adjectives = ['Fast', 'Smart', 'Powerful', 'Elegant', 'Advanced', 'Modern']
   const nouns = ['Builder', 'Engine', 'CLI', 'Framework', 'Library', 'Platform']
 
-  return Array(3)
+  return Array(6)
     .fill(null)
     .map((_, i) => ({
       name: `${adjectives[i % adjectives.length].toLowerCase()}-${nouns[i % nouns.length].toLowerCase()}`,
@@ -64,5 +64,7 @@ export const generateRepositories = () => {
       forks: Math.floor(Math.random() * 20000) + 1000,
       health: Math.floor(Math.random() * 30) + 70,
       description: `A powerful tool for ${['building applications', 'managing data', 'automating workflows'][i % 3]}`,
+      recentCommits: Math.floor(Math.random() * 15),
+      tags: [generateLanguageDNA()[i % 5].skill]
     }))
 }
