@@ -1,0 +1,135 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Ultra-dark background */
+    --background: 0 0% 2%;
+    --foreground: 0 0% 98%;
+    
+    /* Glassmorphic cards */
+    --card: 240 10% 8%;
+    --card-foreground: 0 0% 95%;
+    
+    /* Popover */
+    --popover: 240 10% 8%;
+    --popover-foreground: 0 0% 95%;
+    
+    /* Primary - Emerald Green */
+    --primary: 160 84% 39%;
+    --primary-foreground: 0 0% 2%;
+    
+    /* Secondary - Cyan */
+    --secondary: 180 100% 50%;
+    --secondary-foreground: 0 0% 2%;
+    
+    /* Muted - Dark grays */
+    --muted: 240 10% 15%;
+    --muted-foreground: 0 0% 70%;
+    
+    /* Accent - Bright emerald */
+    --accent: 160 84% 45%;
+    --accent-foreground: 0 0% 2%;
+    
+    /* Destructive */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    
+    /* Border and input */
+    --border: 240 10% 12%;
+    --input: 240 10% 10%;
+    --ring: 160 84% 45%;
+    
+    /* Chart colors */
+    --chart-1: 160 84% 39%;
+    --chart-2: 180 100% 50%;
+    --chart-3: 160 84% 35%;
+    --chart-4: 240 30% 35%;
+    --chart-5: 180 60% 40%;
+    
+    /* Radius */
+    --radius: 0.75rem;
+    
+    /* Sidebar */
+    --sidebar-background: 240 10% 5%;
+    --sidebar-foreground: 0 0% 90%;
+    --sidebar-primary: 160 84% 39%;
+    --sidebar-primary-foreground: 0 0% 2%;
+    --sidebar-accent: 180 100% 50%;
+    --sidebar-accent-foreground: 0 0% 2%;
+    --sidebar-border: 240 10% 12%;
+    --sidebar-ring: 160 84% 39%;
+  }
+}
+
+body {
+  background: linear-gradient(135deg, rgb(5, 5, 10) 0%, rgb(10, 15, 25) 100%);
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  /* Glassmorphism effect */
+  .glassmorphic {
+    @apply bg-card/40 backdrop-blur-md border border-border/40;
+  }
+  
+  /* Neon glow effect */
+  .neon-glow {
+    @apply shadow-lg shadow-primary/30;
+  }
+  
+  .neon-glow-active {
+    @apply shadow-lg shadow-primary/60 border-primary/60;
+  }
+  
+  /* Glow text */
+  .text-glow {
+    @apply text-primary;
+    text-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+  }
+  
+  /* Transition classes */
+  .transition-smooth {
+    @apply transition-all duration-500 ease-out;
+  }
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  body {
+    background: linear-gradient(135deg, rgb(5, 5, 10) 0%, rgb(10, 15, 25) 100%);
+  }
+  
+  aside {
+    width: 60px !important;
+  }
+  
+  main {
+    margin-left: 60px !important;
+    padding: 1rem !important;
+  }
+}
+
+@media (max-width: 640px) {
+  aside {
+    width: 50px !important;
+  }
+  
+  main {
+    margin-left: 50px !important;
+    padding: 0.5rem !important;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
